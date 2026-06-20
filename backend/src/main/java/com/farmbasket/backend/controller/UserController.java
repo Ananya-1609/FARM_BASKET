@@ -2,6 +2,7 @@ package com.farmbasket.backend.controller;
 
 import com.farmbasket.backend.entity.User;
 import com.farmbasket.backend.service.UserService;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,7 +19,7 @@ public class UserController {
     }
 
     @PostMapping
-    public User createUser(@RequestBody User user) {
+    public User createUser(@Valid @RequestBody User user) {
         return userService.saveUser(user);
     }
 
