@@ -4,6 +4,7 @@ import com.farmbasket.backend.dto.LoginRequest;
 import com.farmbasket.backend.dto.RegisterRequest;
 import com.farmbasket.backend.entity.User;
 import com.farmbasket.backend.repository.UserRepository;
+import com.farmbasket.backend.security.JwtService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -12,11 +13,14 @@ public class AuthService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
 
     public AuthService(UserRepository userRepository,
-                       PasswordEncoder passwordEncoder) {
+                       PasswordEncoder passwordEncoder,
+                       JwtService jwtService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.jwtService = jwtService;
     }
 
     public String register(RegisterRequest request) {
@@ -32,7 +36,7 @@ public class AuthService {
                 .build();
 
         userRepository.save(user);
-        return "User registered successfully";
+        return jwtService.generateToken(user);
     }
 
     public String login(LoginRequest request) {
@@ -46,7 +50,7 @@ public class AuthService {
         if (passwordEncoder.matches(
                 request.getPassword(),
                 user.getPassword())) {
-            return "Login Successful";
+            return jwtService.generateToken(user);
         }
 
         return "Invalid Password";
